@@ -152,13 +152,21 @@ public class LoginWindow extends Application implements Runnable {
                 typeAttempt = true;
             } else {
                 send(" : is Typing", 1);
-                //typeAttempt=true;
+                typeAttempt=true;
                 //  System.out.println(txtUser.getText()+" is Typing");
             }
         });
         sendBtn = new Button("Send");
-        sendBtn.setOnAction(e -> {
-
+        sendBtn.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                System.out.println(messageField.getText());
+                send(messageField.getText(), 0);
+                typeAttempt = true;
+            } else {
+                send(" : is Typing", 1);
+                typeAttempt=true;
+                //  System.out.println(txtUser.getText()+" is Typing");
+            }
         });
         logoutBtn = new Button("Logout");
         logoutBtn.setOnAction(e -> {
@@ -222,7 +230,7 @@ public class LoginWindow extends Application implements Runnable {
     private void send(String message, int text) {
         //  if(message.isEmpty()) return;
         //String text=message;
-        //  console(txtUser.getText()+" : "+message);
+          console(txtUser.getText()+" : "+message);
         switch (text) {
             case 0:
                 if (message.isEmpty()) {

@@ -1,3 +1,4 @@
+import java.util.Scanner;
 
 public class ServerMain {
     int port;
@@ -11,9 +12,10 @@ public class ServerMain {
      int port;
     if(args.length!=1){
         System.out.println("Please Enter port number For Server ");
-        return;
+//        return;
     }
-    port=Integer.parseInt(args[0]);
+    Scanner scanner = new Scanner(System.in);
+    port=scanner.nextInt();
     new ServerMain(port);
  }
  
