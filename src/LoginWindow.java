@@ -49,7 +49,7 @@ public class LoginWindow extends Application implements Runnable {
     boolean running = false;
     boolean text = false, typeAttempt = true, seenAttempt = false, messageReceived = false, clientStatus;
     String disconnectedUser;
-    // Server server=new Server(4293);
+//     Server server=new Server(4293);
 
     List<ServerClient> connectedClients = new ArrayList<>();
 
@@ -111,15 +111,15 @@ public class LoginWindow extends Application implements Runnable {
         borderPane.setTop(vBox);
         borderPane.setCenter(grid);
         borderPane.setRight(stackPane);
-        //borderPane.setBottom(hBox);
+        borderPane.setBottom(hBox);
         scene1 = new Scene(borderPane, 600, 500);
         window.setOnCloseRequest(e -> {
-           // if (clientStatus) {
+            if (clientStatus) {
                 String disconnected = "/d/" + ID + "/e/";
                 send(disconnected, 2);
                 running = false;
                 window.close();
-           // }
+            }
         });
         window.setScene(scene1);
         window.show();
@@ -153,7 +153,7 @@ public class LoginWindow extends Application implements Runnable {
             } else {
                 send(" : is Typing", 1);
                 typeAttempt=true;
-                //  System.out.println(txtUser.getText()+" is Typing");
+                  System.out.println(txtUser.getText()+" is Typing");
             }
         });
         sendBtn = new Button("Send");
@@ -162,10 +162,12 @@ public class LoginWindow extends Application implements Runnable {
                 System.out.println(messageField.getText());
                 send(messageField.getText(), 0);
                 typeAttempt = true;
+                console(messageField.getText());
             } else {
                 send(" : is Typing", 1);
                 typeAttempt=true;
-                //  System.out.println(txtUser.getText()+" is Typing");
+                System.out.println(txtUser.getText()+" is Typing");
+                send(messageField.getText(), 0);
             }
         });
         logoutBtn = new Button("Logout");
@@ -252,7 +254,7 @@ public class LoginWindow extends Application implements Runnable {
             case 1:
                 message = "/t/" + txtUser.getText() + " IS TYPING ";
                 send(message.getBytes());
-                // messageField.clear();
+                 messageField.clear();
                 break;
             case 2://disconnected 
                 send(message.getBytes());
@@ -284,12 +286,15 @@ public class LoginWindow extends Application implements Runnable {
     private String receive() {
         byte[] data = new byte[1024];
         DatagramPacket packet = new DatagramPacket(data, data.length);
+        System.out.println(packet.getData());
+        textArea.appendText(packet.getData().toString());
         try {
             socket.receive(packet);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
         String string = new String(packet.getData());
+        System.out.println(string + " ******** ");
         return string;
     }
 
@@ -307,18 +312,22 @@ public class LoginWindow extends Application implements Runnable {
                     } else if (message.startsWith("/d/")) {
                         String disconnectUser = message.split("/d/|/i/")[1];
                         String disconnectID = message.split("/i/|/e/")[1];
-//                        String disconnectMessage = message.split("/d/|/e/")[1];
-                        // alertBox("Client Disconnected",disconnectMessage+ " left the Chat");
+                        String disconnectMessage = message.split("/d/|/e/")[1];
+                         alertBox("Client Disconnected",disconnectMessage+ " left the Chat");
                         System.out.println("Disconnected User : " + disconnectUser);
                         System.out.println("Disconnected ID   : " + disconnectID);
                         disconnectedUser = disconnectUser;
                         console(disconnectUser + " left the Chat");
+                        //////////////////////////////////////////////////////////////////////////////////
+                        textArea.appendText(message + "\n");
                         clientStatus = true;
                         System.out.println("sent cleint status " + clientStatus);
                     } else if (message.startsWith("/m/")) {
                         String text = message.substring(3);
                         text = text.split("/e/")[0];
                         console(text);
+                        ////////////////////////////////////////////////////////////////////////////////
+                        textArea.appendText(message + "\n");
                         messageReceived = true;
                     } else if (message.startsWith("/time/")) {
                         String receivedTime = message.substring(6);
@@ -328,8 +337,8 @@ public class LoginWindow extends Application implements Runnable {
                         long currentTime = System.currentTimeMillis();
                         long totalTime = currentTime - serverTime;
                         double sec = totalTime / 1000;
-
                         console(sec + " sec");
+
                         System.out.println(sec + " seconds");
                     } else if (message.startsWith("/ip/")) {
                         String receivedIp = message.substring(4);
@@ -341,7 +350,7 @@ public class LoginWindow extends Application implements Runnable {
                         number = number.split("/e/")[0];
                         System.out.println("Number of clients located : " + number);
                     } else if (message.startsWith("/s/")) {
-                        //seenAttempt=!seenAttempt;
+                        seenAttempt=!seenAttempt;
                         if (seenAttempt) {
                             String seenStatus = message.split("/s/|/e/")[1];
                             console(seenStatus);
